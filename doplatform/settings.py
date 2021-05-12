@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like thishttps://www.pythonanywhere.com/user/xojiogel: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-)5ydr_so(x638ov_eqwbx(_)$4iyoq@bf(0y=a-tux(e*(p#8v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'xojiogell.pythonanywhere.com']
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'knox',
+    'rest_framework.authtoken',
     'users',
 ]
 
@@ -125,6 +125,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+AUTH_USER_MODEL = 'users.User'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -134,6 +136,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'knox.auth.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ]
 }
