@@ -1,11 +1,7 @@
-from .views import RegisterAPI
-from django.urls import path
-from knox import views as knox_views
-from .views import LoginAPI
+from rest_framework import routers
+from .views import BaseAuthViewSet
 
-urlpatterns = [
-    path('register/', RegisterAPI.as_view(), name='register'),
-    path('login/', LoginAPI.as_view(), name='login'),
-    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('logout-all/', knox_views.LogoutAllView.as_view(), name='logout-all'),
-]
+router = routers.DefaultRouter()
+router.register('', BaseAuthViewSet, basename='auth_base')
+
+urlpatterns = router.urls

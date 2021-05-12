@@ -1,32 +1,50 @@
-from rest_framework import generics, permissions
+from django.forms import model_to_dict
+from rest_framework import permissions, status
 from rest_framework.response import Response
-from knox.models import AuthToken
-from .serializers import UserSerializer, RegisterSerializer
-from django.contrib.auth import login
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from knox.views import LoginView as KnoxLoginView
+from rest_framework.decorators import action
+from rest_framework.viewsets import ViewSet
+
+from .logic.auth import Authenticator
+from .logic.register import Registerer
+from .serializers import RegisterSerializer, LoginSerializer, LoginResponseSerializer
 
 
-# Register API
-class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+class BaseAuthViewSet(ViewSet):
+    """Вьюсет пользователей."""
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(user)[1]
-        })
-
-
-class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format=None):
-        serializer = AuthTokenSerializer(data=request.data)
+    @action(methods=('post',), detail=False)
+    def register(self, request):
+        """Эндпоинт на регистрацию пользователя."""
+        serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        login(request, user)
-        return super(LoginAPI, self).post(request, format=None)
+        Registerer.register(serializer.validated_data)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(methods=('post',), detail=False)
+    def login(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, token = Authenticator.login(
+            serializer.validated_data.get('username'),
+            serializer.validated_data.get('password'),
+            request
+        )
+        serializer = LoginResponseSerializer(
+            data=dict(token=token, user=model_to_dict(user))
+        )
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            data=serializer.validated_data, status=status.HTTP_200_OK
+        )
+
+    @action(methods=('post',), detail=False)
+    def logout(self, request):
+        """Логаут пользователя."""
+        if not request.user.is_authenticated or request.auth is None:
+            response = Response(status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            Authenticator.logout(request.auth.key)
+            response = Response(status=status.HTTP_200_OK)
+        return response

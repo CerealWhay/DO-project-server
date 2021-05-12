@@ -1,22 +1,57 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from django.contrib.auth.models import User
+
+User = get_user_model()
+
+class UserSerializer(serializers.Serializer):
+    """Сериализатор пользователя."""
+
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    first_name = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+    last_name = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
 
 
-# User Serializer
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email')
+class RegisterSerializer(serializers.Serializer):
+    """Сериализатор регистрации пользователя."""
+
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True)
+    password_confirmation = serializers.CharField(required=True)
+    first_name = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+    last_name = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
 
 
-# Register Serializer
-class RegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
+class LoginSerializer(serializers.Serializer):
+    """Сериализатор авторизации пользователя."""
 
-    def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
 
-        return user
+
+class LoginResponseSerializer(serializers.Serializer):
+    """Сериализатор ответа на авторизацию."""
+
+    token = serializers.CharField()
+    user = UserSerializer()
+
+
+class ValidationErrorSerializer(serializers.Serializer):
+    """Сериализатор ошибки валидации."""
+
+    message = serializers.CharField(required=True, help_text='Текст ошибки')
+    is_field_error = serializers.BooleanField(
+        required=True, help_text='Относится ли ошибка к полю формы'
+    )
+    field = serializers.BooleanField(
+        required=False, help_text='Название поля, к которому относится ошибка'
+    )
