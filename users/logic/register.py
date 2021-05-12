@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 
 from .validation import UserDataValidator
+from ..models import Teacher, Student
 
 User = get_user_model()
 
@@ -25,17 +26,27 @@ class Registerer:
         UserDataValidator.validate_email(user_data.get('email'))
 
     @classmethod
-    def register(cls, user_data: dict) -> None:
-        """Основной метод."""
-        cls._validate_data(user_data)
-        user_data.pop('password_confirmation')
-        cls._perform_registration(user_data)
+    def register_teacher(cls, user_data: dict) -> None:
+        """Метод создания учителя."""
+        user = cls._perform_registration(user_data)
+        teacher = Teacher(id=user.id, user=user)
+        teacher.save()
 
     @classmethod
-    def _perform_registration(cls, user_data: dict) -> None:
+    def register_student(cls, user_data: dict) -> None:
+        """Метод создания ученика."""
+        user = cls._perform_registration(user_data)
+        student = Student(id=user.id, user=user)
+        student.save()
+
+    @classmethod
+    def _perform_registration(cls, user_data: dict) -> User:
         """Регистрация пользователя."""
+        cls._validate_data(user_data)
+        user_data.pop('password_confirmation')
         user_password = user_data.pop('password')
         user = User(**user_data)
         user.set_password(user_password)
         user.save()
+        return user
 

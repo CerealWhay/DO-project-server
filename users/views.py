@@ -8,6 +8,8 @@ from .logic.auth import Authenticator
 from .logic.register import Registerer
 from .serializers import RegisterSerializer, LoginSerializer, LoginResponseSerializer
 
+from .models import Teacher, Student
+
 
 class BaseAuthViewSet(ViewSet):
     """Вьюсет пользователей."""
@@ -15,11 +17,19 @@ class BaseAuthViewSet(ViewSet):
     permission_classes = (permissions.AllowAny,)
 
     @action(methods=('post',), detail=False)
-    def register(self, request):
-        """Эндпоинт на регистрацию пользователя."""
+    def register_as_teacher(self, request):
+        """Эндпоинт на регистрацию учителя."""
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Registerer.register(serializer.validated_data)
+        Registerer.register_teacher(serializer.validated_data)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(methods=('post',), detail=False)
+    def register_as_student(self, request):
+        """Эндпоинт на регистрацию ученика."""
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Registerer.register_student(serializer.validated_data)
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=('post',), detail=False)
@@ -31,13 +41,24 @@ class BaseAuthViewSet(ViewSet):
             serializer.validated_data.get('password'),
             request
         )
+
+        if Teacher.objects.filter(id=user.id).exists():
+            qe = Teacher.objects.get(id=user.id)
+        elif Student.objects.filter(id=user.id).exists():
+            qe = Student.objects.get(id=user.id)
+        else:
+            qe = user
+
         serializer = LoginResponseSerializer(
-            data=dict(token=token, user=model_to_dict(user))
+            data=dict(token=token, user=model_to_dict(user), person=model_to_dict(qe))
         )
         serializer.is_valid(raise_exception=True)
         return Response(
             data=serializer.validated_data, status=status.HTTP_200_OK
         )
+
+    def _login_teacher(self):
+        pass
 
     @action(methods=('post',), detail=False)
     def logout(self, request):

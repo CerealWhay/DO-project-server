@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 User = get_user_model()
 
+
 class UserSerializer(serializers.Serializer):
     """Сериализатор пользователя."""
 
@@ -14,6 +15,15 @@ class UserSerializer(serializers.Serializer):
     last_name = serializers.CharField(
         required=False, allow_blank=True, allow_null=True
     )
+
+
+class PersonSerializer(serializers.Serializer):
+    """Сериализатор учителя."""
+
+    # is_teacher = serializers.BooleanField(required=True)
+    # is_student = serializers.BooleanField(required=True)
+    is_teacher = serializers.BooleanField(required=False)
+    is_student = serializers.BooleanField(required=False)
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -43,6 +53,7 @@ class LoginResponseSerializer(serializers.Serializer):
 
     token = serializers.CharField()
     user = UserSerializer()
+    person = PersonSerializer()
 
 
 class ValidationErrorSerializer(serializers.Serializer):
