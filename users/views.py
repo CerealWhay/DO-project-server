@@ -8,6 +8,9 @@ from .logic.auth import Authenticator
 from .logic.register import Registerer
 from .serializers import RegisterSerializer, LoginSerializer, LoginResponseSerializer
 
+from .models import Teacher, Student
+from .logic.roles import define_role
+
 
 class BaseAuthViewSet(ViewSet):
     """Вьюсет пользователей."""
@@ -15,11 +18,19 @@ class BaseAuthViewSet(ViewSet):
     permission_classes = (permissions.AllowAny,)
 
     @action(methods=('post',), detail=False)
-    def register(self, request):
-        """Эндпоинт на регистрацию пользователя."""
+    def register_as_teacher(self, request):
+        """Эндпоинт на регистрацию учителя."""
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Registerer.register(serializer.validated_data)
+        Registerer.register_teacher(serializer.validated_data)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(methods=('post',), detail=False)
+    def register_as_student(self, request):
+        """Эндпоинт на регистрацию ученика."""
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Registerer.register_student(serializer.validated_data)
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=('post',), detail=False)
@@ -31,8 +42,13 @@ class BaseAuthViewSet(ViewSet):
             serializer.validated_data.get('password'),
             request
         )
+
         serializer = LoginResponseSerializer(
-            data=dict(token=token, user=model_to_dict(user))
+            data=dict(
+                token=token,
+                user=model_to_dict(user),
+                person=define_role(user)
+            )
         )
         serializer.is_valid(raise_exception=True)
         return Response(
