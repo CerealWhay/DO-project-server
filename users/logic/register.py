@@ -28,19 +28,19 @@ class Registerer:
     @classmethod
     def register_teacher(cls, user_data: dict) -> None:
         """Метод создания учителя."""
-        user = cls._perform_registration(user_data)
-        teacher = Teacher(id=user.id, user=user)
+        user = cls._create_user(user_data)
+        teacher = Teacher(user=user)
         teacher.save()
 
     @classmethod
     def register_student(cls, user_data: dict) -> None:
         """Метод создания ученика."""
-        user = cls._perform_registration(user_data)
-        student = Student(id=user.id, user=user)
+        user = cls._create_user(user_data)
+        student = Student(user=user)
         student.save()
 
     @classmethod
-    def _perform_registration(cls, user_data: dict) -> User:
+    def _create_user(cls, user_data: dict) -> User:
         """Регистрация пользователя."""
         cls._validate_data(user_data)
         user_data.pop('password_confirmation')

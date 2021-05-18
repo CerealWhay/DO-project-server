@@ -18,12 +18,8 @@ class UserSerializer(serializers.Serializer):
 
 
 class PersonSerializer(serializers.Serializer):
-    """Сериализатор учителя."""
-
-    # is_teacher = serializers.BooleanField(required=True)
-    # is_student = serializers.BooleanField(required=True)
-    is_teacher = serializers.BooleanField(required=False)
-    is_student = serializers.BooleanField(required=False)
+    """Сериализатор принадлежности к типу пользователя."""
+    is_person = serializers.CharField(required=True)
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -53,7 +49,7 @@ class LoginResponseSerializer(serializers.Serializer):
 
     token = serializers.CharField()
     user = UserSerializer()
-    person = PersonSerializer()
+    person = serializers.CharField(required=True)
 
 
 class ValidationErrorSerializer(serializers.Serializer):
