@@ -1,3 +1,4 @@
+from rest_framework.authtoken.models import Token
 from ..models import Teacher, Student
 
 TEACHER_ROLE = 'teacher'
@@ -12,3 +13,8 @@ def define_role(user):
         return STUDENT_ROLE
     else:
         return ADMIN
+
+
+def get_token(user):
+    token, _ = Token.objects.get_or_create(user=user)
+    return token.key

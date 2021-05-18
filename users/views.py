@@ -9,7 +9,7 @@ from .logic.register import Registerer
 from .serializers import RegisterSerializer, LoginSerializer, LoginResponseSerializer
 
 from .models import Teacher, Student
-from .logic.roles import define_role
+from .logic.user_info import define_role
 
 
 class BaseAuthViewSet(ViewSet):
