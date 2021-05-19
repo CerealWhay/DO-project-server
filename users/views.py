@@ -22,7 +22,7 @@ class BaseAuthViewSet(ViewSet):
         """Эндпоинт на регистрацию учителя."""
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Registerer.register_teacher(serializer.validated_data)
+        Registerer.create_teacher(serializer.validated_data)
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=('post',), detail=False)
@@ -30,7 +30,7 @@ class BaseAuthViewSet(ViewSet):
         """Эндпоинт на регистрацию ученика."""
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Registerer.register_student(serializer.validated_data)
+        Registerer.create_student(serializer.validated_data)
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=('post',), detail=False)
@@ -42,6 +42,8 @@ class BaseAuthViewSet(ViewSet):
             serializer.validated_data.get('password'),
             request
         )
+
+        print(request.user)
 
         serializer = LoginResponseSerializer(
             data=dict(

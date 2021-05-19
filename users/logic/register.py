@@ -26,14 +26,14 @@ class Registerer:
         UserDataValidator.validate_email(user_data.get('email'))
 
     @classmethod
-    def register_teacher(cls, user_data: dict) -> None:
+    def create_teacher(cls, user_data: dict) -> None:
         """Метод создания учителя."""
         user = cls._create_user(user_data)
         teacher = Teacher(user=user)
         teacher.save()
 
     @classmethod
-    def register_student(cls, user_data: dict) -> None:
+    def create_student(cls, user_data: dict) -> None:
         """Метод создания ученика."""
         user = cls._create_user(user_data)
         student = Student(user=user)
