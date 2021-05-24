@@ -24,6 +24,7 @@ class CoursesViewSet(ViewSet):
         for course in courses:
             serializer = CourseSerializer(
                 data=dict(
+                    # id курса
                     id=course.id,
                     course_name=course.course_name,
                     course_description=course.course_description,
