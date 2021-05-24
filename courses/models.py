@@ -5,6 +5,7 @@ from .logic.upload_step_directory import course_step_file_path
 class Course(models.Model):
     date = models.DateTimeField(auto_now=False, auto_now_add=True)
     course_name = models.CharField(max_length=50)
+    course_description = models.CharField(max_length=250)
     teacher = models.ForeignKey('users.Teacher', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -16,4 +17,8 @@ class CourseStep(models.Model):
     file = models.FileField(upload_to=course_step_file_path)
 
     def __str__(self):
-        return self.file
+        return str(self.file)
+
+    def delete(self, using=None, keep_parents=False):
+        self.file.storage.delete(self.file.name)
+        super().delete()

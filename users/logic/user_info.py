@@ -18,3 +18,11 @@ def define_role(user):
 def get_token(user):
     token, _ = Token.objects.get_or_create(user=user)
     return token.key
+
+
+def get_teacher(user):
+    return Teacher.objects.filter(user=user).first()
+
+
+def get_student(user):
+    return Student.objects.filter(user=user).first()
