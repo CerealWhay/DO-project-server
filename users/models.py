@@ -21,4 +21,5 @@ class Teacher(Person):
 
 
 class Student(Person):
+    courses = models.ManyToManyField('courses.Course')
     pass
