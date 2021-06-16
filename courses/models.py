@@ -27,7 +27,7 @@ class CourseStep(models.Model):
 class StudentAnswer(models.Model):
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
     file = models.FileField(upload_to=student_answer_file_path)
-    step = models.OneToOneField(CourseStep, on_delete=models.CASCADE)
+    step = models.ForeignKey(CourseStep, on_delete=models.CASCADE)
     is_done = models.BooleanField(default=False)
 
     def __str__(self):
