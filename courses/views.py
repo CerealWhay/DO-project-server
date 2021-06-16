@@ -103,14 +103,15 @@ class TeacherCoursesViewSet(ViewSet):
     @action(methods=('get',), detail=False)
     def get_students(self, request):
         courses = Course.objects.filter(teacher=get_teacher(request.user))
-        students = set()
+        students_all = set()
         for course in courses:
-            student = course.student_set.all()
-            if student:
-                students.add(student.first())
+            students = course.student_set.all()
+            for student in students:
+                if student:
+                    students_all.add(student)
 
         response = []
-        for student in students:
+        for student in students_all:
             serializer = StudentSerializer(
                 data=dict(
                     student_firstname=student.user.first_name,
@@ -129,7 +130,7 @@ class TeacherCoursesViewSet(ViewSet):
     def get_courses_by_student(self, request):
 
         student = Student.objects.filter(id=request.data.get('id'),)
-        courses = student.first().courses.all()
+        courses = student.first().courses.filter(teacher=get_teacher(request.user))
         serializer = CourseSerializer(courses, many=True)
         return Response(
             data=serializer.data, status=status.HTTP_200_OK
