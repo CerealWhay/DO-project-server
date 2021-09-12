@@ -12,19 +12,19 @@ DEBUG = True
 SECRET_KEY = 'django-insecure-)5ydr_so(x638ov_eqwbx(_)$4iyoq@bf(0y=a-tux(e*(p#8v'
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    'stark-spire-44281.herokuapp.com',
+    'fast-wave-11891.herokuapp.com',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://do-platform.onrender.com',
-    'https://stark-spire-44281.herokuapp.com',
+    'https://fast-wave-11891.herokuapp.com',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['stark-spire-44281.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['fast-wave-11891.herokuapp.com']
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_DOMAIN = "stark-spire-44281.herokuapp.com"
+CSRF_COOKIE_DOMAIN = "fast-wave-11891.herokuapp.com"
 # --------------------------------
 
 # Application definition
